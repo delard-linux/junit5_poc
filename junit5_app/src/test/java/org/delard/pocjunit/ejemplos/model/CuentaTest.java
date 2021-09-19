@@ -123,10 +123,12 @@ class CuentaTest {
     @Test
     @DisplayName("Test saldo de la cuenta, entorno dev")
     void testSaldoCuentaConAssumption(){
-        assumeTrue(System.getProperty("ENV") != null
-                && System.getProperty("ENV").equals("dev"));
-        assertNotNull(cuenta.getSaldo());
-        assertEquals(2154.1234,cuenta.getSaldo().doubleValue());
+        assumingThat(System.getProperty("ENV") != null
+                && System.getProperty("ENV").equals("dev"),
+                    () -> {
+                        assertNotNull(cuenta.getSaldo());
+                        assertEquals(2154.1234,cuenta.getSaldo().doubleValue());
+                    });
         assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO)<0);
         assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO)>0);
     }
