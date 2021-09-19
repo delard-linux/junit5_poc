@@ -1,10 +1,9 @@
 package org.delard.pocjunit.ejemplos.model;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assumptions.*;
 import org.delard.pocjunit.ejemplos.exception.DineroInsuficienteException;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.condition.*;
 
 import java.math.BigDecimal;
 
@@ -122,53 +121,16 @@ class CuentaTest {
     }
 
     @Test
-    @EnabledOnOs(OS.WINDOWS)
-    void testSoloWindows(){
-
+    @DisplayName("Test saldo de la cuenta, entorno dev")
+    void testSaldoCuentaConAssumption(){
+        assumeTrue(System.getProperty("ENV") != null
+                && System.getProperty("ENV").equals("dev"));
+        assertNotNull(cuenta.getSaldo());
+        assertEquals(2154.1234,cuenta.getSaldo().doubleValue());
+        assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO)<0);
+        assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO)>0);
     }
 
-    @Test
-    @EnabledOnOs({OS.LINUX, OS.MAC})
-    void testSoloLinuxMac(){
 
-    }
-
-    @Test
-    @DisabledOnOs(OS.WINDOWS)
-    void testNoWindows(){
-
-    }
-
-    @Test
-    @EnabledOnJre(JRE.JAVA_8)
-    void testSoloJdk8(){
-
-    }
-
-    @Test
-    @EnabledOnJre(JRE.JAVA_16)
-    void testSoloJdk16(){
-
-    }
-
-    @Test
-    void imprimirSystemProperties(){
-        System.getProperties().forEach( (k,v) -> System.out.println(k + " = " + v));
-    }
-
-    @Test
-    @EnabledIfSystemProperty(named="java.version",matches = "16.[0-9]+.[0-9]+")
-    void testSiJdkEsAlgunaVersion16(){
-    }
-
-    @Test
-    void imprimirVariablesEntorno(){
-        System.getenv().forEach( ( (k,v) -> System.out.println(k + " = " + v) ));
-    }
-
-    @Test
-    @EnabledIfEnvironmentVariable(named="LANG",matches = "en_US.UTF-8")
-    void testSiLanguageEnUS(){
-    }
 
 }
