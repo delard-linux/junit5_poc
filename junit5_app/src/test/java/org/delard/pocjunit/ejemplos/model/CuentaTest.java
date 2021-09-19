@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.delard.pocjunit.ejemplos.exception.DineroInsuficienteException;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 
 import java.math.BigDecimal;
+import java.util.Properties;
 
 class CuentaTest {
 
@@ -120,5 +122,44 @@ class CuentaTest {
                  );
     }
 
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void testSoloWindows(){
+
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+    void testSoloLinuxMac(){
+
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void testNoWindows(){
+
+    }
+
+    @Test
+    @EnabledOnJre(JRE.JAVA_8)
+    void testSoloJdk8(){
+
+    }
+
+    @Test
+    @EnabledOnJre(JRE.JAVA_16)
+    void testSoloJdk16(){
+
+    }
+
+    @Test
+    void imprimirSystemProperties(){
+        System.getProperties().forEach( (k,v) -> System.out.println(k + " = " + v));
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named="java.version",matches = "16.[0-9]+.[0-9]+")
+    void testSiJdkEsAlgunaVersion16(){
+    }
 
 }
