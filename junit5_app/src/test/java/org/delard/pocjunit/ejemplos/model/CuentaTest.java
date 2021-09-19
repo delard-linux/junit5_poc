@@ -22,6 +22,16 @@ class CuentaTest {
         System.out.println("Finalizando el metodo");
     }
 
+    @BeforeAll
+    static void beforeAll() {
+        System.out.println("Inicializando el TEST");
+    }
+
+    @AfterAll
+    static void afterAll() {
+        System.out.println("Finalizando el TEST");
+    }
+
     @SuppressWarnings("ExcessiveLambdaUsage")
     @Test
     @DisplayName("Test nombre de la cuenta")
