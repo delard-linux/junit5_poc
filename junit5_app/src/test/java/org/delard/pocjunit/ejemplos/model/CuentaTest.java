@@ -7,7 +7,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 
 import java.math.BigDecimal;
-import java.util.Properties;
 
 class CuentaTest {
 
@@ -160,6 +159,16 @@ class CuentaTest {
     @Test
     @EnabledIfSystemProperty(named="java.version",matches = "16.[0-9]+.[0-9]+")
     void testSiJdkEsAlgunaVersion16(){
+    }
+
+    @Test
+    void imprimirVariablesEntorno(){
+        System.getenv().forEach( ( (k,v) -> System.out.println(k + " = " + v) ));
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named="LANG",matches = "en_US.UTF-8")
+    void testSiLanguageEnUS(){
     }
 
 }
