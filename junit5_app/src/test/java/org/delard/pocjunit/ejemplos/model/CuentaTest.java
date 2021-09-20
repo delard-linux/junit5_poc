@@ -60,9 +60,12 @@ class CuentaTest {
         assertEquals(cuenta,cuenta2);
     }
 
-    @Test
+    @RepeatedTest(value=5, name = "{displayName} - Repetición numero {currentRepetition} de {totalRepetitions}")
     @DisplayName("Test de debito sobre cuentas")
-    void testDebitoCuenta(){
+    void testDebitoCuentaRepetir(RepetitionInfo info) {
+        if(info.getCurrentRepetition() == 3){
+            System.out.println("estamos en la repeticion " + info.getCurrentRepetition());
+        }
         cuenta.debito(new BigDecimal("100"));
         assertNotNull(cuenta.getSaldo());
         assertEquals(2054, cuenta.getSaldo().intValue());
