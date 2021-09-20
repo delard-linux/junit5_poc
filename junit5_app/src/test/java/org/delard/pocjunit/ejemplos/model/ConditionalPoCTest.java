@@ -7,29 +7,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ConditionalPoCTest {
 
-    @Test
-    @EnabledOnOs(OS.WINDOWS)
-    void testSoloWindows(){
+
+    @Nested
+    @DisplayName("Test Sistema Operativo")
+    class SistemaOperativoTest {
+        @Test
+        @EnabledOnOs(OS.WINDOWS)
+        void testSoloWindows(){
+        }
+
+        @Test
+        @EnabledOnOs({OS.LINUX, OS.MAC})
+        void testSoloLinuxMac(){
+            fail();
+        }
+
+        @Test
+        @DisabledOnOs(OS.WINDOWS)
+        void testNoWindows(){
+
+        }
+
+        @Test
+        @EnabledOnJre(JRE.JAVA_8)
+        void testSoloJdk8(){
+
+        }
 
     }
 
-    @Test
-    @EnabledOnOs({OS.LINUX, OS.MAC})
-    void testSoloLinuxMac(){
 
-    }
-
-    @Test
-    @DisabledOnOs(OS.WINDOWS)
-    void testNoWindows(){
-
-    }
-
-    @Test
-    @EnabledOnJre(JRE.JAVA_8)
-    void testSoloJdk8(){
-
-    }
 
     @Test
     @EnabledOnJre(JRE.JAVA_16)
