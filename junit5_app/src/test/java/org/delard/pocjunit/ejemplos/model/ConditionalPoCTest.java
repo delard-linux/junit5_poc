@@ -5,8 +5,8 @@ import org.junit.jupiter.api.condition.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ConditionalPoCTest {
-
+@Tag("infra")
+class ConditionalPoCTest extends ClasePadreTest{
 
     @Nested
     @DisplayName("Test Sistema Operativo")
@@ -19,7 +19,7 @@ class ConditionalPoCTest {
         @Test
         @EnabledOnOs({OS.LINUX, OS.MAC})
         void testSoloLinuxMac(){
-            fail();
+            //fail();
         }
 
         @Test
@@ -35,8 +35,6 @@ class ConditionalPoCTest {
         }
 
     }
-
-
 
     @Test
     @EnabledOnJre(JRE.JAVA_16)
