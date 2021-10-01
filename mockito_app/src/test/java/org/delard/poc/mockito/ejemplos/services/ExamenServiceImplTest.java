@@ -110,5 +110,29 @@ class ExamenServiceImplTest {
 
     }
 
+    @Test
+    void findExamenByNombreConPreguntasGenericasVerifyMock (){
+
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
+        when(preguntasRepository.findPreguntasByExamenId(anyLong())).thenReturn(DatosExamenes.PREGUNTAS_GENERICAS);
+
+        var examen = examenService.findExamenByNombreWithPreguntas("Matematicas");
+
+        assertNotNull(examen);
+        assertEquals(1L, examen.orElseThrow().getId());
+        assertEquals("Matematicas", examen.orElseThrow().getNombre());
+        assertNotNull(examen.orElseThrow().getPreguntas());
+        assertEquals(4, examen.orElseThrow().getPreguntas().size());
+        assertTrue(examen.orElseThrow().getPreguntas().contains("pregunta 1"));
+        assertTrue(examen.orElseThrow().getPreguntas().contains("pregunta 3"));
+
+        // verificar llamada a metodos del mock
+        verify(examenRepository).findAll();
+        verify(preguntasRepository).findPreguntasByExamenId(1L);
+
+    }
+
+
+
 
 }
