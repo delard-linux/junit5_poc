@@ -4,10 +4,12 @@ import org.delard.pocmockito.ejemplos.models.Examen;
 import org.delard.pocmockito.ejemplos.repositories.ExamenRepository;
 import org.delard.pocmockito.ejemplos.repositories.ExamenRepositoryImpl;
 import org.delard.pocmockito.ejemplos.repositories.PreguntasRepository;
-import org.delard.pocmockito.ejemplos.services.ExamenService;
 import org.delard.pocmockito.ejemplos.services.ExamenServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,16 +19,19 @@ import static org.mockito.Mockito.*;
 
 class ExamenServiceImplTest {
 
+    @Mock
     ExamenRepository examenRepository;
+    @Mock
     PreguntasRepository preguntasRepository;
-    ExamenService examenService;
+
+    @InjectMocks
+    ExamenServiceImpl examenService;
 
 
     @BeforeEach
     void setUp() {
-        examenRepository = mock(ExamenRepository.class);
-        preguntasRepository = mock(PreguntasRepository.class);
-        examenService = new ExamenServiceImpl(examenRepository,preguntasRepository);
+        //inyeccion de dependencias en Mockito, es necesaria la implementacion del service en vez de su interface
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
