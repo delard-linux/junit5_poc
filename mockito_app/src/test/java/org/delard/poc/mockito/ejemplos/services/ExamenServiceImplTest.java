@@ -7,9 +7,11 @@ import org.delard.pocmockito.ejemplos.repositories.PreguntasRepository;
 import org.delard.pocmockito.ejemplos.services.ExamenServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ExamenServiceImplTest {
 
     @Mock
@@ -30,8 +33,6 @@ class ExamenServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        //inyeccion de dependencias en Mockito, es necesaria la implementacion del service en vez de su interface
-        MockitoAnnotations.openMocks(this);
     }
 
     @Test
