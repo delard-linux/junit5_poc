@@ -9,7 +9,6 @@ import org.delard.pocmockito.ejemplos.services.ExamenServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,12 +53,7 @@ class ExamenServiceImplTest {
     @Test
     void findExamenByNombreMock (){
 
-        var datos = Arrays.asList(
-                new Examen(1L, "Matematicas"),
-                new Examen(2L, "Lengua"),
-                new Examen(3L, "Historia"));
-
-        when(examenRepository.findAll()).thenReturn(datos);
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
 
         var examen = examenService.findExamenByNombre("Matematicas");
 
@@ -67,5 +61,54 @@ class ExamenServiceImplTest {
         assertEquals(1L, examen.orElseThrow().getId());
         assertEquals("Matematicas", examen.orElseThrow().getNombre());
     }
+
+    @Test
+    void findExamenByNombreConPreguntasMock (){
+
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
+        when(preguntasRepository.findPreguntasByExamenId(1L)).thenReturn(DatosExamenes.PREGUNTAS_MATEMATICAS);
+
+        var examen = examenService.findExamenByNombreWithPreguntas("Matematicas");
+        var examen2 = examenService.findExamenByNombreWithPreguntas("Historia");
+
+        assertNotNull(examen);
+        assertEquals(1L, examen.orElseThrow().getId());
+        assertEquals("Matematicas", examen.orElseThrow().getNombre());
+        assertNotNull(examen.orElseThrow().getPreguntas());
+        assertEquals(4, examen.orElseThrow().getPreguntas().size());
+        assertTrue(examen.orElseThrow().getPreguntas().contains("aritmetica"));
+
+        assertNotNull(examen2);
+        assertEquals(3L, examen2.orElseThrow().getId());
+        assertEquals("Historia", examen2.orElseThrow().getNombre());
+        assertTrue(examen2.orElseThrow().getPreguntas().isEmpty());
+
+    }
+
+    @Test
+    void findExamenByNombreConPreguntasGenericasMock (){
+
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
+        when(preguntasRepository.findPreguntasByExamenId(anyLong())).thenReturn(DatosExamenes.PREGUNTAS_GENERICAS);
+
+        var examen = examenService.findExamenByNombreWithPreguntas("Matematicas");
+        var examen2 = examenService.findExamenByNombreWithPreguntas("Historia");
+
+        assertNotNull(examen);
+        assertEquals(1L, examen.orElseThrow().getId());
+        assertEquals("Matematicas", examen.orElseThrow().getNombre());
+        assertNotNull(examen.orElseThrow().getPreguntas());
+        assertEquals(4, examen.orElseThrow().getPreguntas().size());
+        assertTrue(examen.orElseThrow().getPreguntas().contains("pregunta 1"));
+        assertTrue(examen.orElseThrow().getPreguntas().contains("pregunta 3"));
+
+        assertNotNull(examen2);
+        assertEquals(3L, examen2.orElseThrow().getId());
+        assertEquals("Historia", examen2.orElseThrow().getNombre());
+        assertTrue(examen.orElseThrow().getPreguntas().contains("pregunta 1"));
+        assertTrue(examen.orElseThrow().getPreguntas().contains("pregunta 3"));
+
+    }
+
 
 }
