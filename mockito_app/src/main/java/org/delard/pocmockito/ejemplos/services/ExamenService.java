@@ -9,4 +9,6 @@ public interface ExamenService {
 
     Optional<Examen> findExamenByNombreWithPreguntas(String nombre);
 
+    Long saveExamen(Examen examen);
+
 }

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
@@ -36,7 +35,7 @@ class ExamenServiceImplTest {
     }
 
     @Test
-    void findExamenByNombre(){
+    void testFindExamenByNombre(){
         examenRepository = new ExamenRepositoryImpl();
         examenService = new ExamenServiceImpl(examenRepository,preguntasRepository);
         var examen = examenService.findExamenByNombre("Matematicas");
@@ -46,7 +45,7 @@ class ExamenServiceImplTest {
     }
 
     @Test
-    void findExamenByNombreListaVaciaMock(){
+    void testFindExamenByNombreListaVaciaMock(){
         List<Examen> datos = Collections.emptyList();
 
         when(examenRepository.findAll()).thenReturn(datos);
@@ -57,7 +56,7 @@ class ExamenServiceImplTest {
     }
 
     @Test
-    void findExamenByNombreMock (){
+    void testFindExamenByNombreMock (){
 
         when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
 
@@ -69,7 +68,7 @@ class ExamenServiceImplTest {
     }
 
     @Test
-    void findExamenByNombreConPreguntasMock (){
+    void testFindExamenByNombreConPreguntasMock (){
 
         when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
         when(preguntasRepository.findPreguntasByExamenId(1L)).thenReturn(DatosExamenes.PREGUNTAS_MATEMATICAS);
@@ -92,7 +91,7 @@ class ExamenServiceImplTest {
     }
 
     @Test
-    void findExamenByNombreConPreguntasGenericasMock (){
+    void testFindExamenByNombreConPreguntasGenericasMock (){
 
         when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
         when(preguntasRepository.findPreguntasByExamenId(anyLong())).thenReturn(DatosExamenes.PREGUNTAS_GENERICAS);
@@ -117,7 +116,7 @@ class ExamenServiceImplTest {
     }
 
     @Test
-    void findExamenByNombreConPreguntasGenericasVerifyMock (){
+    void testFindExamenByNombreConPreguntasGenericasVerifyMock (){
 
         when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
         when(preguntasRepository.findPreguntasByExamenId(anyLong())).thenReturn(DatosExamenes.PREGUNTAS_GENERICAS);
@@ -138,7 +137,22 @@ class ExamenServiceImplTest {
 
     }
 
+    @Test
+    void testGuardarMock () {
+        // Se verifica que se llama a los servicios del repository por debajo unicamente
+        Examen examenPrueba = DatosExamenes.EXAMEN;
+        examenPrueba.setPreguntas(DatosExamenes.PREGUNTAS_GENERICAS);
 
+        when(examenRepository.save(examenPrueba)).thenReturn(8L);
+
+        var examenId = examenService.saveExamen(DatosExamenes.EXAMEN);
+
+        assertNotNull(examenId);
+        assertEquals(8L, examenId);
+        verify(examenRepository).save(any(Examen.class));
+        verify(preguntasRepository).savePreguntas(any());
+
+    }
 
 
 }
