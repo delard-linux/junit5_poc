@@ -1,9 +1,8 @@
 package org.delard.poc.mockito.ejemplos.services;
 
+import org.delard.pocmockito.ejemplos.DatosExamenes;
 import org.delard.pocmockito.ejemplos.models.Examen;
-import org.delard.pocmockito.ejemplos.repositories.ExamenRepository;
-import org.delard.pocmockito.ejemplos.repositories.ExamenRepositoryImpl;
-import org.delard.pocmockito.ejemplos.repositories.PreguntasRepository;
+import org.delard.pocmockito.ejemplos.repositories.*;
 import org.delard.pocmockito.ejemplos.services.ExamenServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,9 +22,9 @@ import static org.mockito.Mockito.*;
 class ExamenServiceImplTest {
 
     @Mock
-    ExamenRepository examenRepository;
+    ExamenRepositoryImplOtro examenRepository;
     @Mock
-    PreguntasRepository preguntasRepository;
+    PreguntasRepositoryImpl preguntasRepository;
 
     @InjectMocks
     ExamenServiceImpl examenService;
@@ -39,7 +38,7 @@ class ExamenServiceImplTest {
 
     @Test
     void testFindExamenByNombre(){
-        examenRepository = new ExamenRepositoryImpl();
+        examenRepository = new ExamenRepositoryImplOtro();
         examenService = new ExamenServiceImpl(examenRepository,preguntasRepository);
         var examen = examenService.findExamenByNombre("Matematicas");
         assertTrue(examen.isPresent());
@@ -343,6 +342,18 @@ class ExamenServiceImplTest {
 
         verify(examenRepository).save(any(Examen.class));
         verify(preguntasRepository).savePreguntas(anyList());
+    }
+
+    @Test
+    void testDoCallRealMethod() {
+        // Se verifica que en el servicio uno de los dos metodos se usa mock y el segundo es real
+        // El mock es el findAll de los examenes pero la lista de preguntas por examen es real
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES_TOPOGRAFIA);
+        doCallRealMethod().when(preguntasRepository).findPreguntasByExamenId(anyLong());
+        Examen examen = examenService.findExamenByNombreWithPreguntas("Teledeteccion").orElseThrow();
+        assertEquals(5L, examen.getId());
+        assertEquals("Teledeteccion", examen.getNombre());
+
     }
 
 }

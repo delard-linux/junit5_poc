@@ -1,4 +1,4 @@
-package org.delard.poc.mockito.ejemplos.services;
+package org.delard.pocmockito.ejemplos;
 
 import org.delard.pocmockito.ejemplos.models.Examen;
 
@@ -7,12 +7,21 @@ import java.util.List;
 
 public class DatosExamenes {
 
+    private DatosExamenes() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static final List<Examen> EXAMENES = Arrays.asList(
             new Examen(1L, "Matematicas"),
             new Examen(2L, "Lengua"),
             new Examen(3L, "Historia"));
 
-    public final static List<Examen> EXAMENES_ID_NULL = Arrays.asList(new Examen(null, "Matematicas"),
+    public static final List<Examen> EXAMENES_TOPOGRAFIA = Arrays.asList(
+            new Examen(4L, "Topografia de Obras"),
+            new Examen(5L, "Teledeteccion"),
+            new Examen(6L, "Sistemas de Informacion Geografica"));
+
+    public static final List<Examen> EXAMENES_ID_NULL = Arrays.asList(new Examen(null, "Matematicas"),
             new Examen(null, "Lengua"),
             new Examen(null, "Historia"));
 
