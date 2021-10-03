@@ -283,4 +283,15 @@ class ExamenServiceImplTest {
 
     }
 
+    @Test
+    void testDoThrow() {
+        // Comprobar que la llamada a un metodo mock que devuelve void está fallando
+        // en vez de usar el when hay que usar la sintaxis doThrow ... when
+        Examen examen = DatosExamenes.EXAMEN;
+        examen.setPreguntas(DatosExamenes.PREGUNTAS_GENERICAS);
+        doThrow(IllegalArgumentException.class).when(preguntasRepository).savePreguntas(anyList());
+        assertThrows(IllegalArgumentException.class, () -> examenService.saveExamen(examen));
+
+    }
+
 }
