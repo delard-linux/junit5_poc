@@ -9,6 +9,7 @@ public class ExamenRepositoryImpl implements ExamenRepository {
 
     @Override
     public Long save(Examen examen) {
+        // TODO document why this method is mock
         return null;
     }
 

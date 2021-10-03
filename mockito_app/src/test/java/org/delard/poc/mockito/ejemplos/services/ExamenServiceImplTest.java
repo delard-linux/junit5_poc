@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
 import java.util.Collections;
 import java.util.List;
@@ -143,14 +145,39 @@ class ExamenServiceImplTest {
         Examen examenPrueba = DatosExamenes.EXAMEN;
         examenPrueba.setPreguntas(DatosExamenes.PREGUNTAS_GENERICAS);
 
-        when(examenRepository.save(examenPrueba)).thenReturn(8L);
+        when(examenRepository.save(any(Examen.class))).thenReturn(8L);
+
+        var examenId = examenService.saveExamen(examenPrueba);
+
+        assertNotNull(examenId);
+        assertEquals(8L, examenId);
+        verify(examenRepository).save(any(Examen.class));
+        verify(preguntasRepository).savePreguntas(anyList());
+
+    }
+
+    @Test
+    void testGuardarAutoincrementalMock () {
+        // Se verifica que se llama a los servicios del repository por debajo unicamente
+        Examen examenPrueba = DatosExamenes.EXAMEN;
+        examenPrueba.setPreguntas(DatosExamenes.PREGUNTAS_GENERICAS);
+
+        when(examenRepository.save(any(Examen.class))).then(
+                new Answer<Long>() {
+                    Long secuencia = 7L;
+                    @Override
+                    public Long answer(InvocationOnMock invocationOnMock) {
+                        return ++secuencia;
+                    }
+                }
+        );
 
         var examenId = examenService.saveExamen(DatosExamenes.EXAMEN);
 
         assertNotNull(examenId);
         assertEquals(8L, examenId);
         verify(examenRepository).save(any(Examen.class));
-        verify(preguntasRepository).savePreguntas(any());
+        verify(preguntasRepository).savePreguntas(anyList());
 
     }
 
