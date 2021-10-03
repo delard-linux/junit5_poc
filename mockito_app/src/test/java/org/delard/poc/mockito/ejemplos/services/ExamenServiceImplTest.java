@@ -182,6 +182,7 @@ class ExamenServiceImplTest {
     }
     @Test
     void testManejoException() {
+        // Se verifica que cuando el examen Matematicas tiene un Id nulo se devuelva una excepcion
         when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES_ID_NULL);
         when(preguntasRepository.findPreguntasByExamenId(isNull())).thenThrow(new IllegalArgumentException());
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
@@ -193,5 +194,19 @@ class ExamenServiceImplTest {
 
     }
 
+    @Test
+    void testArgumentMatchers() {
+        // Se verifica que cuando se busca el examen de Matematicas con sus preguntas se le pasa el Id 1 con diferentes alternativas con ArgumentMatchers
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
+        when(preguntasRepository.findPreguntasByExamenId(anyLong())).thenReturn(DatosExamenes.PREGUNTAS_MATEMATICAS);
+        examenService.findExamenByNombreWithPreguntas("Matematicas");
+
+        verify(examenRepository).findAll();
+
+        verify(preguntasRepository).findPreguntasByExamenId(argThat(arg -> arg != null && arg.equals(1L)));
+        verify(preguntasRepository).findPreguntasByExamenId(argThat(arg -> arg != null && arg >= 1L));
+        //verify(preguntasRepository).findPreguntasByExamenId(eq(1L));
+
+    }
 
 }
