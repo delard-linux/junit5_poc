@@ -180,6 +180,18 @@ class ExamenServiceImplTest {
         verify(preguntasRepository).savePreguntas(anyList());
 
     }
+    @Test
+    void testManejoException() {
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES_ID_NULL);
+        when(preguntasRepository.findPreguntasByExamenId(isNull())).thenThrow(new IllegalArgumentException());
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+            examenService.findExamenByNombreWithPreguntas("Matematicas"));
+        assertEquals(IllegalArgumentException.class, exception.getClass());
+
+        verify(examenRepository).findAll();
+        verify(preguntasRepository).findPreguntasByExamenId(isNull());
+
+    }
 
 
 }

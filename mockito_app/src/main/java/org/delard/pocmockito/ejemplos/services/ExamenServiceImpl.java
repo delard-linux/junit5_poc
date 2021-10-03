@@ -37,7 +37,7 @@ public class ExamenServiceImpl implements ExamenService{
 
     @Override
     public Long saveExamen(Examen examen) {
-        if (!examen.getPreguntas().isEmpty()) {
+        if (!   examen.getPreguntas().isEmpty()) {
             preguntasRepository.savePreguntas(examen.getPreguntas());
         }
         return examenRepository.save(examen);

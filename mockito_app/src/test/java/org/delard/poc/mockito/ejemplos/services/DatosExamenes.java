@@ -12,6 +12,10 @@ public class DatosExamenes {
             new Examen(2L, "Lengua"),
             new Examen(3L, "Historia"));
 
+    public final static List<Examen> EXAMENES_ID_NULL = Arrays.asList(new Examen(null, "Matematicas"),
+            new Examen(null, "Lengua"),
+            new Examen(null, "Historia"));
+
     public static final List<String> PREGUNTAS_MATEMATICAS = Arrays.asList(
             "aritmetica", "integrales", "trigonometria", "derivadas");
 
