@@ -8,6 +8,7 @@ import org.delard.pocmockito.ejemplos.services.ExamenServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
@@ -206,6 +207,52 @@ class ExamenServiceImplTest {
         verify(preguntasRepository).findPreguntasByExamenId(argThat(arg -> arg != null && arg.equals(1L)));
         verify(preguntasRepository).findPreguntasByExamenId(argThat(arg -> arg != null && arg >= 1L));
         //verify(preguntasRepository).findPreguntasByExamenId(eq(1L));
+
+    }
+
+    @Test
+    void testArgumentMatchersPersonalizado() {
+        // Se verifica que cuando se busca el examen de Matematicas con sus preguntas se le pasa el Id 1 recibido por Matematicas
+        // y se verifica con un ArgumentMatcher personalizado, esta personalización lleva tb mensaje personalizado
+        // si se le pasa el juego de datos EXAMENES_ID_NEGATIVOS falla
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
+        when(preguntasRepository.findPreguntasByExamenId(anyLong())).thenReturn(DatosExamenes.PREGUNTAS_MATEMATICAS);
+        examenService.findExamenByNombreWithPreguntas("Matematicas");
+
+        verify(examenRepository).findAll();
+        verify(preguntasRepository).findPreguntasByExamenId(argThat(new MiArgsMatchers()));
+
+    }
+
+    public static class MiArgsMatchers implements ArgumentMatcher<Long> {
+
+        private Long argument;
+
+        @Override
+        public boolean matches(Long idExamen) {
+            this.argument = idExamen;
+            return idExamen != null && idExamen > 0;
+        }
+
+        @Override
+        public String toString() {
+            return "Mensaje personalizado de error " +
+                    "que imprime mockito en caso de que falle el test con el argumento " +
+                    this.argument + " por no ser un entero positivo";
+        }
+    }
+
+    @Test
+    void testArgumentMatchersPersonalizadoLambda() {
+        // Se verifica que cuando se busca el examen de Matematicas con sus preguntas se le pasa el Id 1 recibido por Matematicas
+        // y se verifica con un ArgumentMatcher personalizado con lambdas sin mensaje personalizado
+        // si se le pasa el juego de datos EXAMENES_ID_NEGATIVOS falla
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
+        when(preguntasRepository.findPreguntasByExamenId(anyLong())).thenReturn(DatosExamenes.PREGUNTAS_MATEMATICAS);
+        examenService.findExamenByNombreWithPreguntas("Matematicas");
+
+        verify(examenRepository).findAll();
+        verify(preguntasRepository).findPreguntasByExamenId(argThat(argumento -> argumento != null && argumento > 0 ));
 
     }
 
