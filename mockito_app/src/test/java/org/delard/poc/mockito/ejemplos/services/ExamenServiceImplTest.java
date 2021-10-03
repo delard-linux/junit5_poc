@@ -8,9 +8,7 @@ import org.delard.pocmockito.ejemplos.services.ExamenServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
@@ -32,6 +30,8 @@ class ExamenServiceImplTest {
     @InjectMocks
     ExamenServiceImpl examenService;
 
+    @Captor
+    ArgumentCaptor<Long> captorId;
 
     @BeforeEach
     void setUp() {
@@ -253,6 +253,33 @@ class ExamenServiceImplTest {
 
         verify(examenRepository).findAll();
         verify(preguntasRepository).findPreguntasByExamenId(argThat(argumento -> argumento != null && argumento > 0 ));
+
+    }
+
+    @Test
+    void testArgumentCaptor() {
+        // Se verifica que cuando se busca el examen de Matematicas con sus preguntas se le pasa el Id 1 recibido por Matematicas
+        // la verificación se hace capturando el argumento
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
+        when(preguntasRepository.findPreguntasByExamenId(anyLong())).thenReturn(DatosExamenes.PREGUNTAS_MATEMATICAS);
+        examenService.findExamenByNombreWithPreguntas("Matematicas");
+
+        ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
+        verify(preguntasRepository).findPreguntasByExamenId(captor.capture());
+        assertEquals(1L, captor.getValue());
+
+    }
+
+    @Test
+    void testArgumentCaptorAnotacion() {
+        // Se verifica que cuando se busca el examen de Matematicas con sus preguntas se le pasa el Id 1 recibido por Matematicas
+        // la verificación se hace capturando el argumento
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
+        when(preguntasRepository.findPreguntasByExamenId(anyLong())).thenReturn(DatosExamenes.PREGUNTAS_MATEMATICAS);
+        examenService.findExamenByNombreWithPreguntas("Matematicas");
+
+        verify(preguntasRepository).findPreguntasByExamenId(captorId.capture());
+        assertEquals(1L, captorId.getValue());
 
     }
 
