@@ -294,4 +294,55 @@ class ExamenServiceImplTest {
 
     }
 
+    @Test
+    void testDoAnswer() {
+        // Test para verificar que dependiendo del argumento se genera un u otro mock de preguntas
+        when(examenRepository.findAll()).thenReturn(DatosExamenes.EXAMENES);
+        doAnswer(invocation -> {
+            Long id = invocation.getArgument(0);
+            return id == 1L? DatosExamenes.PREGUNTAS_MATEMATICAS: DatosExamenes.PREGUNTAS_GENERICAS;
+        }).when(preguntasRepository).findPreguntasByExamenId(anyLong());
+
+        Examen examen = examenService.findExamenByNombreWithPreguntas("Matematicas").orElseThrow();
+        assertEquals(4, examen.getPreguntas().size());
+        assertTrue(examen.getPreguntas().contains("aritmetica"));
+        assertEquals(1L, examen.getId());
+        assertEquals("Matematicas", examen.getNombre());
+        // la primera vez que se llama...
+        verify(preguntasRepository).findPreguntasByExamenId(anyLong());
+
+        Examen examen2 = examenService.findExamenByNombreWithPreguntas("Historia").orElseThrow();
+        assertEquals(4, examen2.getPreguntas().size());
+        assertTrue(examen2.getPreguntas().contains("pregunta 1"));
+
+    }
+
+    @Test
+    void testDoAnswerGuardarExamen() {
+        // Test para verificar que intercepta el argumento y devuelve el ID a traves de una secuencia que post incrementa
+        // Given
+        Examen newExamen = DatosExamenes.EXAMEN;
+        newExamen.setPreguntas(DatosExamenes.PREGUNTAS_GENERICAS);
+
+        doAnswer(new Answer<Long>(){
+            Long secuencia = 8L;
+            @Override
+            public Long answer(InvocationOnMock invocation) {
+                Examen examen = invocation.getArgument(0);
+                examen.setId(secuencia++);
+                return examen.getId();
+            }
+        }).when(examenRepository).save(any(Examen.class));
+
+        // When
+        Long idExamen = examenService.saveExamen(newExamen);
+
+        // Then
+        assertNotNull(idExamen);
+        assertEquals(8L, idExamen);
+
+        verify(examenRepository).save(any(Examen.class));
+        verify(preguntasRepository).savePreguntas(anyList());
+    }
+
 }
