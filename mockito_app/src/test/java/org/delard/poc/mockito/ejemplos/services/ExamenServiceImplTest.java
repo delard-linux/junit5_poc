@@ -3,6 +3,7 @@ package org.delard.poc.mockito.ejemplos.services;
 import org.delard.pocmockito.ejemplos.DatosExamenes;
 import org.delard.pocmockito.ejemplos.models.Examen;
 import org.delard.pocmockito.ejemplos.repositories.*;
+import org.delard.pocmockito.ejemplos.services.ExamenService;
 import org.delard.pocmockito.ejemplos.services.ExamenServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -354,6 +356,29 @@ class ExamenServiceImplTest {
         assertEquals(5L, examen.getId());
         assertEquals("Teledeteccion", examen.getNombre());
 
+    }
+
+    @Test
+    void testSpy() {
+        // Con Spy se verifica algun metodo concreto pero el resto es real,
+        // se tienen que usar implementaciones, no se puede usar el interfaz
+        ExamenRepository examenRepository = spy(ExamenRepositoryImpl.class);
+        PreguntasRepository preguntaRepository = spy(PreguntasRepositoryImpl.class);
+        ExamenService examenService = new ExamenServiceImpl(examenRepository, preguntaRepository);
+
+        List<String> preguntas = Arrays.asList("aritmetica 1", "algebra 2", "geometria 3");
+        // este no lo usamos ya que implica llamar al preguntas repository, para ello usamos el siguiente
+        //when(preguntaRepository.findPreguntasByExamenId(anyLong())).thenReturn(preguntas);
+        doReturn(preguntas).when(preguntaRepository).findPreguntasByExamenId(anyLong());
+
+        Examen examen = examenService.findExamenByNombreWithPreguntas("Matematicas").orElseThrow();
+        assertEquals(1, examen.getId());
+        assertEquals("Matematicas", examen.getNombre());
+        assertEquals(3, examen.getPreguntas().size());
+        assertTrue(examen.getPreguntas().contains("aritmetica 1"));
+
+        verify(examenRepository).findAll();
+        verify(preguntaRepository).findPreguntasByExamenId(anyLong());
     }
 
 }
